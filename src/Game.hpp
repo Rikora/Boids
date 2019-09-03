@@ -19,8 +19,10 @@ namespace fb
 		void render();
 		void pollEvents();
 		void update(sf::Time dt);
+		void centerOrigin(sf::Shape& shape) const;
 
 		sf::RenderWindow m_window;
-		std::vector<sf::Vertex> m_boids;
+		//std::vector<sf::Vertex> m_boids;
+		std::vector<sf::CircleShape> m_boids;
 	};
 }

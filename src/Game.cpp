@@ -28,14 +28,20 @@ namespace fb
 		{
 			if (event.type == sf::Event::MouseButtonPressed && event.key.code == sf::Mouse::Left)
 			{
-				auto pos = m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window));
-				
-				// Construct triangle (boid) from position
-				m_boids.push_back(sf::Vertex(sf::Vector2f(pos.x - BOID_SIZE, pos.y), sf::Color::Green));
-				m_boids.push_back(sf::Vertex(sf::Vector2f(pos.x, pos.y - BOID_SIZE), sf::Color::Green));
-				m_boids.push_back(sf::Vertex(sf::Vector2f(pos.x + BOID_SIZE, pos.y), sf::Color::Green));
-			}
+				sf::CircleShape boid = sf::CircleShape(BOID_SIZE, 3);
+				centerOrigin(boid);
+				boid.setPosition(m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window)));
+				boid.setFillColor(sf::Color::Green);
 
+				m_boids.push_back(boid);
+
+				//auto pos = m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window));
+
+				//// Construct triangle (boid) from position
+				//m_boids.push_back(sf::Vertex(sf::Vector2f(pos.x - BOID_SIZE, pos.y), sf::Color::Green));
+				//m_boids.push_back(sf::Vertex(sf::Vector2f(pos.x, pos.y - BOID_SIZE), sf::Color::Green));
+				//m_boids.push_back(sf::Vertex(sf::Vector2f(pos.x + BOID_SIZE, pos.y), sf::Color::Green));
+			}
 
 			if (event.type == sf::Event::Closed || (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape))
 			{
@@ -54,9 +60,19 @@ namespace fb
 		m_window.clear();
 
 		// Draw boids
-		m_window.draw(m_boids.data(), m_boids.size(), sf::Triangles);
+		for (const auto& boid : m_boids)
+		{
+			m_window.draw(boid);
+		}
+
+		//m_window.draw(m_boids.data(), m_boids.size(), sf::Triangles);
 
 		m_window.display();
 	}
 
+	void Game::centerOrigin(sf::Shape& shape) const
+	{
+		sf::FloatRect bounds = shape.getLocalBounds();
+		shape.setOrigin(std::floor(bounds.left + bounds.width / 2.f), std::floor(bounds.top + bounds.height / 2.f));
+	}
 }
