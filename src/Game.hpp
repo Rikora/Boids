@@ -20,6 +20,6 @@ namespace fb
 		void update(sf::Time dt);
 
 		sf::RenderWindow m_window;
-		sf::CircleShape m_circle;
+		std::vector<sf::CircleShape> m_boids;
 	};
 }

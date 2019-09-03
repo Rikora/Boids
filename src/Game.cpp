@@ -3,13 +3,9 @@
 namespace fb
 {
 	Game::Game() : 
-	m_window(sf::VideoMode(WIDTH, HEIGHT), "Boids", sf::Style::Close),
-	m_circle(10.f)
+	m_window(sf::VideoMode(WIDTH, HEIGHT), "Boids", sf::Style::Close, sf::ContextSettings(0, 0, 8))
 	{
 		m_window.setVerticalSyncEnabled(true);
-
-		m_circle.setPosition(sf::Vector2f(100.f, 100.f));
-		m_circle.setFillColor(sf::Color::Green);
 	}
 
 	void Game::run()
@@ -30,6 +26,19 @@ namespace fb
 
 		while (m_window.pollEvent(event))
 		{
+			if (event.type == sf::Event::MouseButtonPressed && event.key.code == sf::Mouse::Left)
+			{
+				sf::CircleShape boid = sf::CircleShape(10.f, 3);
+
+				// TODO: change origin if needed
+				boid.setPosition(static_cast<sf::Vector2f>(sf::Mouse::getPosition(m_window)));
+				boid.setFillColor(sf::Color::Green);
+
+				// Add the boid
+				m_boids.push_back(boid);
+			}
+
+
 			if (event.type == sf::Event::Closed || (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape))
 			{
 				m_window.close();
@@ -38,14 +47,19 @@ namespace fb
 	}
 
 	void Game::update(sf::Time dt)
-	{	
+	{
+		// Do nothing by default...
 	}
 
 	void Game::render()
 	{
 		m_window.clear();
 
-		m_window.draw(m_circle);
+		// TODO: use sf::vertex in the end?
+		for (const auto& boid : m_boids)
+		{
+			m_window.draw(boid);
+		}
 
 		m_window.display();
 	}
