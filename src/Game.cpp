@@ -1,4 +1,5 @@
 #include "Game.hpp"
+#include "utils/Utility.hpp"
 
 namespace fb
 {
@@ -28,14 +29,14 @@ namespace fb
 		{
 			if (event.type == sf::Event::MouseButtonPressed && event.key.code == sf::Mouse::Left)
 			{
-				sf::CircleShape boid = sf::CircleShape(BOID_SIZE, 3);
-				centerOrigin(boid);
-				boid.setPosition(m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window)));
-				boid.setFillColor(sf::Color::Green);
+				sf::CircleShape body = sf::CircleShape(BOID_SIZE, 3);
+				utils::centerOrigin(body);
+				body.setPosition(m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window)));
+				body.setFillColor(sf::Color::Green);
 
-				m_boids.push_back(boid);
+				m_boids.push_back(Boid(body));
 
-				//auto pos = m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window));
+				//const auto pos = m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window));
 
 				//// Construct triangle (boid) from position
 				//m_boids.push_back(sf::Vertex(sf::Vector2f(pos.x - BOID_SIZE, pos.y), sf::Color::Green));
@@ -62,7 +63,7 @@ namespace fb
 		// Draw boids
 		for (const auto& boid : m_boids)
 		{
-			m_window.draw(boid);
+			m_window.draw(boid.body);
 		}
 
 		//m_window.draw(m_boids.data(), m_boids.size(), sf::Triangles);
@@ -70,9 +71,33 @@ namespace fb
 		m_window.display();
 	}
 
-	void Game::centerOrigin(sf::Shape& shape) const
+	sf::Vector2f Game::computeAlignment(const Boid& boid)
 	{
-		sf::FloatRect bounds = shape.getLocalBounds();
-		shape.setOrigin(std::floor(bounds.left + bounds.width / 2.f), std::floor(bounds.top + bounds.height / 2.f));
+		sf::Vector2f v = sf::Vector2f(0.f, 0.f);
+		int neighbors = 0;
+
+		for (const auto& b : m_boids)
+		{
+			if (b.body.getPosition() != boid.body.getPosition())
+			{
+				if (utils::distance(boid.body.getPosition(), b.body.getPosition()) < 300.f)
+				{
+					v += b.velocity;
+					neighbors++;
+				}
+			}
+		}
+
+		// Return null vector
+		if (neighbors == 0)
+		{
+			return v;
+		}
+
+		// Direction vector
+		v /= static_cast<float>(neighbors);
+		v = utils::normalize(v);
+
+		return v;
 	}
 }
