@@ -4,6 +4,7 @@
 
 #define WIDTH 600U
 #define HEIGHT 480U
+#define BOID_SIZE 10.f
 
 namespace fb
 {
@@ -20,6 +21,6 @@ namespace fb
 		void update(sf::Time dt);
 
 		sf::RenderWindow m_window;
-		std::vector<sf::CircleShape> m_boids;
+		std::vector<sf::Vertex> m_boids;
 	};
 }

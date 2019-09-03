@@ -28,14 +28,12 @@ namespace fb
 		{
 			if (event.type == sf::Event::MouseButtonPressed && event.key.code == sf::Mouse::Left)
 			{
-				sf::CircleShape boid = sf::CircleShape(10.f, 3);
-
-				// TODO: change origin if needed
-				boid.setPosition(static_cast<sf::Vector2f>(sf::Mouse::getPosition(m_window)));
-				boid.setFillColor(sf::Color::Green);
-
-				// Add the boid
-				m_boids.push_back(boid);
+				auto pos = m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window));
+				
+				// Construct triangle (boid) from position
+				m_boids.push_back(sf::Vertex(sf::Vector2f(pos.x - BOID_SIZE, pos.y), sf::Color::Green));
+				m_boids.push_back(sf::Vertex(sf::Vector2f(pos.x, pos.y - BOID_SIZE), sf::Color::Green));
+				m_boids.push_back(sf::Vertex(sf::Vector2f(pos.x + BOID_SIZE, pos.y), sf::Color::Green));
 			}
 
 
@@ -55,11 +53,8 @@ namespace fb
 	{
 		m_window.clear();
 
-		// TODO: use sf::vertex in the end?
-		for (const auto& boid : m_boids)
-		{
-			m_window.draw(boid);
-		}
+		// Draw boids
+		m_window.draw(m_boids.data(), m_boids.size(), sf::Triangles);
 
 		m_window.display();
 	}
