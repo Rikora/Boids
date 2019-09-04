@@ -71,18 +71,18 @@ namespace fb
 		m_window.display();
 	}
 
-	sf::Vector2f Game::computeAlignment(const Boid& boid)
+	sf::Vector2f Game::computeAlignment(const Boid& targetBoid)
 	{
 		sf::Vector2f v = sf::Vector2f(0.f, 0.f);
 		int neighbors = 0;
 
-		for (const auto& b : m_boids)
+		for (const auto& boid : m_boids)
 		{
-			if (b.body.getPosition() != boid.body.getPosition())
+			if (boid.body.getPosition() != targetBoid.body.getPosition())
 			{
-				if (utils::distance(boid.body.getPosition(), b.body.getPosition()) < 300.f)
+				if (utils::distance(targetBoid.body.getPosition(), boid.body.getPosition()) < BOID_RADIUS)
 				{
-					v += b.velocity;
+					v += boid.velocity;
 					neighbors++;
 				}
 			}
@@ -94,8 +94,70 @@ namespace fb
 			return v;
 		}
 
-		// Direction vector
+		// Direction vector to nearby boids
 		v /= static_cast<float>(neighbors);
+		v = utils::normalize(v);
+
+		return v;
+	}
+
+	sf::Vector2f Game::computeCohesion(const Boid& targetBoid)
+	{
+		sf::Vector2f v = sf::Vector2f(0.f, 0.f);
+		int neighbors = 0;
+
+		for (const auto& boid : m_boids)
+		{
+			if (boid.body.getPosition() != targetBoid.body.getPosition())
+			{
+				if (utils::distance(targetBoid.body.getPosition(), boid.body.getPosition()) < BOID_RADIUS)
+				{
+					v += boid.body.getPosition();
+					neighbors++;
+				}
+			}
+		}
+
+		// Return null vector
+		if (neighbors == 0)
+		{
+			return v;
+		}
+
+		// Direction vector towards the center of mass
+		v /= static_cast<float>(neighbors);
+		v -= targetBoid.body.getPosition();
+		v = utils::normalize(v);
+
+		return v;
+	}
+
+	sf::Vector2f Game::computeSeparation(const Boid& targetBoid)
+	{
+		sf::Vector2f v = sf::Vector2f(0.f, 0.f);
+		int neighbors = 0;
+
+		for (const auto& boid : m_boids)
+		{
+			if (boid.body.getPosition() != targetBoid.body.getPosition())
+			{
+				if (utils::distance(targetBoid.body.getPosition(), boid.body.getPosition()) < BOID_RADIUS)
+				{
+					v += boid.body.getPosition() - targetBoid.body.getPosition();
+					neighbors++;
+				}
+			}
+		}
+
+		// Return null vector
+		if (neighbors == 0)
+		{
+			return v;
+		}
+
+		// Direction vector away from the nearby boids
+		v /= static_cast<float>(neighbors);
+		v *= -1.f;
 		v = utils::normalize(v);
 
 		return v;

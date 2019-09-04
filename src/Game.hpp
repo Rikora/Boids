@@ -6,6 +6,7 @@
 #define HEIGHT 480U
 #define BOID_SIZE 10.f
 #define BOID_VELOCITY 50.f
+#define BOID_RADIUS 100.f
 
 namespace fb
 {
@@ -29,7 +30,11 @@ namespace fb
 		void render();
 		void pollEvents();
 		void update(sf::Time dt);
-		sf::Vector2f computeAlignment(const Boid& boid);
+
+		// Rules
+		sf::Vector2f computeAlignment(const Boid& targetBoid);
+		sf::Vector2f computeCohesion(const Boid& targetBoid);
+		sf::Vector2f computeSeparation(const Boid& targetBoid);
 
 		sf::RenderWindow m_window;
 		//std::vector<sf::Vertex> m_boids;
