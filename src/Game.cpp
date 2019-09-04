@@ -53,6 +53,7 @@ namespace fb
 
 	void Game::update(sf::Time dt)
 	{	
+		// TODO: if a boid moves outside the boundaries they appear on the other side of the screen
 		// TODO: add rotation?
 		// Update boids
 		for (auto& boid : m_boids)
