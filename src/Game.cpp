@@ -52,8 +52,17 @@ namespace fb
 	}
 
 	void Game::update(sf::Time dt)
-	{
-		// Do nothing by default...
+	{	
+		// TODO: add rotation?
+		// Update boids
+		for (auto& boid : m_boids)
+		{
+			// Add the rules to the velocity of the boid
+			boid.velocity += alignment(boid) + cohesion(boid) + separation(boid);
+			boid.velocity = utils::normalize(boid.velocity) * BOID_VELOCITY * (1 / 60.f);
+		
+			boid.body.setPosition(boid.body.getPosition() + boid.velocity);
+		}
 	}
 
 	void Game::render()
@@ -71,7 +80,7 @@ namespace fb
 		m_window.display();
 	}
 
-	sf::Vector2f Game::computeAlignment(const Boid& targetBoid)
+	sf::Vector2f Game::alignment(const Boid& targetBoid)
 	{
 		sf::Vector2f v = sf::Vector2f(0.f, 0.f);
 		int neighbors = 0;
@@ -101,7 +110,7 @@ namespace fb
 		return v;
 	}
 
-	sf::Vector2f Game::computeCohesion(const Boid& targetBoid)
+	sf::Vector2f Game::cohesion(const Boid& targetBoid)
 	{
 		sf::Vector2f v = sf::Vector2f(0.f, 0.f);
 		int neighbors = 0;
@@ -132,7 +141,7 @@ namespace fb
 		return v;
 	}
 
-	sf::Vector2f Game::computeSeparation(const Boid& targetBoid)
+	sf::Vector2f Game::separation(const Boid& targetBoid)
 	{
 		sf::Vector2f v = sf::Vector2f(0.f, 0.f);
 		int neighbors = 0;
