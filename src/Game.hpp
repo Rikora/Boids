@@ -5,8 +5,8 @@
 #define WIDTH 1000U
 #define HEIGHT 600U
 #define BOID_SIZE 7.f
-#define BOID_VELOCITY 20.f
-#define BOID_RADIUS 150.f
+#define BOID_VELOCITY 30.f
+#define BOID_RADIUS 100.f
 
 namespace fb
 {

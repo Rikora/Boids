@@ -57,11 +57,30 @@ namespace fb
 		// TODO: add rotation?
 		// Update boids
 		for (auto& boid : m_boids)
-		{
+		{			
+			// Reset position of a boid if it's outside the window
+			if (boid.body.getPosition().x > static_cast<float>(WIDTH))
+			{
+				boid.body.setPosition(0.f, boid.body.getPosition().y);
+			}
+			else if (boid.body.getPosition().x < 0.f)
+			{
+				boid.body.setPosition(static_cast<float>(WIDTH), boid.body.getPosition().y);
+			}
+			
+			if (boid.body.getPosition().y > static_cast<float>(HEIGHT))
+			{
+				boid.body.setPosition(boid.body.getPosition().x, 0.f);
+			}
+			else if (boid.body.getPosition().y < 0.f)
+			{
+				boid.body.setPosition(boid.body.getPosition().x, static_cast<float>(HEIGHT));
+			}
+
 			// Add the rules to the velocity of the boid
-			boid.velocity += alignment(boid) + cohesion(boid) + separation(boid);
+			boid.velocity += 0.01f * cohesion(boid) + alignment(boid) + separation(boid);
 			boid.velocity = utils::normalize(boid.velocity) * BOID_VELOCITY * (1 / 60.f);
-		
+
 			boid.body.setPosition(boid.body.getPosition() + boid.velocity);
 		}
 	}
@@ -81,6 +100,7 @@ namespace fb
 		m_window.display();
 	}
 
+	// Rule 1: alignment
 	sf::Vector2f Game::alignment(const Boid& targetBoid)
 	{
 		sf::Vector2f v = sf::Vector2f(0.f, 0.f);
@@ -90,18 +110,15 @@ namespace fb
 		{
 			if (boid.body.getPosition() != targetBoid.body.getPosition())
 			{
-				if (utils::distance(targetBoid.body.getPosition(), boid.body.getPosition()) < BOID_RADIUS)
-				{
-					v += boid.velocity;
-					neighbors++;
-				}
+				v += boid.velocity;
+				neighbors++;
 			}
 		}
 
 		// Return null vector
 		if (neighbors == 0)
 		{
-			return v;
+			return sf::Vector2f(0.f, 0.f);
 		}
 
 		// Direction vector to nearby boids
@@ -111,6 +128,7 @@ namespace fb
 		return v;
 	}
 
+	// Rule 2: cohesion
 	sf::Vector2f Game::cohesion(const Boid& targetBoid)
 	{
 		sf::Vector2f v = sf::Vector2f(0.f, 0.f);
@@ -120,18 +138,15 @@ namespace fb
 		{
 			if (boid.body.getPosition() != targetBoid.body.getPosition())
 			{
-				if (utils::distance(targetBoid.body.getPosition(), boid.body.getPosition()) < BOID_RADIUS)
-				{
-					v += boid.body.getPosition();
-					neighbors++;
-				}
+				v += boid.body.getPosition();
+				neighbors++;
 			}
 		}
 
 		// Return null vector
 		if (neighbors == 0)
 		{
-			return v;
+			return sf::Vector2f(0.f, 0.f);
 		}
 
 		// Direction vector towards the center of mass
@@ -142,6 +157,7 @@ namespace fb
 		return v;
 	}
 
+	// Rule 3: separation
 	sf::Vector2f Game::separation(const Boid& targetBoid)
 	{
 		sf::Vector2f v = sf::Vector2f(0.f, 0.f);
@@ -162,7 +178,7 @@ namespace fb
 		// Return null vector
 		if (neighbors == 0)
 		{
-			return v;
+			return sf::Vector2f(0.f, 0.f);
 		}
 
 		// Direction vector away from the nearby boids
