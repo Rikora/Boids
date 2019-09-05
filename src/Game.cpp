@@ -35,13 +35,6 @@ namespace fb
 				body.setFillColor(sf::Color::Green);
 
 				m_boids.push_back(Boid(body));
-
-				//const auto pos = m_window.mapPixelToCoords(sf::Mouse::getPosition(m_window));
-
-				//// Construct triangle (boid) from position
-				//m_boids.push_back(sf::Vertex(sf::Vector2f(pos.x - BOID_SIZE, pos.y), sf::Color::Green));
-				//m_boids.push_back(sf::Vertex(sf::Vector2f(pos.x, pos.y - BOID_SIZE), sf::Color::Green));
-				//m_boids.push_back(sf::Vertex(sf::Vector2f(pos.x + BOID_SIZE, pos.y), sf::Color::Green));
 			}
 
 			if (event.type == sf::Event::Closed || (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape))
@@ -53,8 +46,6 @@ namespace fb
 
 	void Game::update(sf::Time dt)
 	{	
-		// TODO: if a boid moves outside the boundaries they appear on the other side of the screen
-		// TODO: add rotation?
 		// Update boids
 		for (auto& boid : m_boids)
 		{			
@@ -78,8 +69,8 @@ namespace fb
 			}
 
 			// Add the rules to the velocity of the boid
-			boid.velocity += 0.01f * cohesion(boid) + alignment(boid) + separation(boid);
-			boid.velocity = utils::normalize(boid.velocity) * BOID_VELOCITY * (1 / 60.f);
+			boid.velocity += 0.01f * cohesion(boid) + 0.8f * alignment(boid) + separation(boid);
+			boid.velocity = utils::normalize(boid.velocity) * BOID_VELOCITY * dt.asSeconds();
 
 			boid.body.setPosition(boid.body.getPosition() + boid.velocity);
 		}
@@ -94,8 +85,6 @@ namespace fb
 		{
 			m_window.draw(boid.body);
 		}
-
-		//m_window.draw(m_boids.data(), m_boids.size(), sf::Triangles);
 
 		m_window.display();
 	}
@@ -115,7 +104,6 @@ namespace fb
 			}
 		}
 
-		// Return null vector
 		if (neighbors == 0)
 		{
 			return sf::Vector2f(0.f, 0.f);
@@ -143,7 +131,6 @@ namespace fb
 			}
 		}
 
-		// Return null vector
 		if (neighbors == 0)
 		{
 			return sf::Vector2f(0.f, 0.f);
@@ -169,21 +156,17 @@ namespace fb
 			{
 				if (utils::distance(targetBoid.body.getPosition(), boid.body.getPosition()) < BOID_RADIUS)
 				{
-					v += boid.body.getPosition() - targetBoid.body.getPosition();
+					v -= boid.body.getPosition() - targetBoid.body.getPosition();
 					neighbors++;
 				}
 			}
 		}
 
-		// Return null vector
 		if (neighbors == 0)
 		{
 			return sf::Vector2f(0.f, 0.f);
 		}
 
-		// Direction vector away from the nearby boids
-		v /= static_cast<float>(neighbors);
-		v *= -1.f;
 		v = utils::normalize(v);
 
 		return v;

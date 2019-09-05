@@ -37,7 +37,6 @@ namespace fb
 		sf::Vector2f separation(const Boid& targetBoid);
 
 		sf::RenderWindow m_window;
-		//std::vector<sf::Vertex> m_boids;
 		std::vector<Boid> m_boids;
 	};
 }
