@@ -49,24 +49,7 @@ namespace fb
 		// Update boids
 		for (auto& boid : m_boids)
 		{			
-			// Reset position of a boid if it's outside the window
-			if (boid.body.getPosition().x > static_cast<float>(WIDTH))
-			{
-				boid.body.setPosition(0.f, boid.body.getPosition().y);
-			}
-			else if (boid.body.getPosition().x < 0.f)
-			{
-				boid.body.setPosition(static_cast<float>(WIDTH), boid.body.getPosition().y);
-			}
-			
-			if (boid.body.getPosition().y > static_cast<float>(HEIGHT))
-			{
-				boid.body.setPosition(boid.body.getPosition().x, 0.f);
-			}
-			else if (boid.body.getPosition().y < 0.f)
-			{
-				boid.body.setPosition(boid.body.getPosition().x, static_cast<float>(HEIGHT));
-			}
+			checkBoundaries(boid);
 
 			// Add the rules to the velocity of the boid
 			boid.velocity += 0.01f * cohesion(boid) + 0.8f * alignment(boid) + separation(boid);
@@ -87,6 +70,28 @@ namespace fb
 		}
 
 		m_window.display();
+	}
+
+	void Game::checkBoundaries(Boid& boid)
+	{
+		// Reset position of a boid if it's outside the window
+		if (boid.body.getPosition().x > static_cast<float>(WIDTH + 10))
+		{
+			boid.body.setPosition(0.f, boid.body.getPosition().y);
+		}
+		else if (boid.body.getPosition().x < 0.f)
+		{
+			boid.body.setPosition(static_cast<float>(WIDTH), boid.body.getPosition().y);
+		}
+
+		if (boid.body.getPosition().y > static_cast<float>(HEIGHT + 10))
+		{
+			boid.body.setPosition(boid.body.getPosition().x, 0.f);
+		}
+		else if (boid.body.getPosition().y < 0.f)
+		{
+			boid.body.setPosition(boid.body.getPosition().x, static_cast<float>(HEIGHT));
+		}
 	}
 
 	// Rule 1: alignment

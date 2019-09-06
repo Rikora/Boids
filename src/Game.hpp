@@ -30,6 +30,7 @@ namespace fb
 		void render();
 		void pollEvents();
 		void update(sf::Time dt);
+		void checkBoundaries(Boid& boid);
 
 		// Rules
 		sf::Vector2f alignment(const Boid& targetBoid);
