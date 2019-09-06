@@ -12,6 +12,6 @@ More complex rules can also be added, such as obstacle avoidance and goal seekin
 
 * [Boids Pseudocode](http://www.kfish.org/boids/pseudocode.html)
 
-## Licence
+## License
 
 This project is licensed under the MIT License, see LICENSE for more information.
